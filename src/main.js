@@ -25,7 +25,7 @@
 
   // Interactive Button Click Ripple
   document.addEventListener('pointerdown', function (e) {
-    const btn = e.target.closest('.button, .newsletter-form button, .back-to-top');
+    const btn = e.target.closest('.button, .newsletter-form button, .contact-submit-btn, .back-to-top');
     if (!btn) return;
 
     const rect = btn.getBoundingClientRect();
@@ -40,6 +40,89 @@
     btn.appendChild(ripple);
     ripple.addEventListener('animationend', function () {
       ripple.remove();
+    });
+  });
+
+  document.querySelectorAll('[data-contact-form]').forEach(function (form) {
+    form.addEventListener('submit', function (event) {
+      const url = (form.getAttribute('action') || '').trim();
+      const nameInput = form.querySelector('input[name="name"]');
+      const emailInput = form.querySelector('input[name="email"]');
+      const messageInput = form.querySelector('textarea[name="message"]');
+      const button = form.querySelector('button[type="submit"]');
+      const label = button ? (button.querySelector('.btn-label') || button) : null;
+      const statusEl = form.parentElement.querySelector('[data-contact-status]');
+
+      const name = nameInput ? nameInput.value.trim() : '';
+      const email = emailInput ? emailInput.value.trim() : '';
+      const message = messageInput ? messageInput.value.trim() : '';
+
+      if (!name || !email || !message) return;
+
+      const setStatus = function (msg, isSuccess) {
+        if (!statusEl) return;
+        statusEl.innerHTML = msg;
+        statusEl.className = 'contact-status is-visible ' + (isSuccess ? 'is-success' : 'is-error');
+      };
+
+      const clearStatus = function () {
+        if (!statusEl) return;
+        statusEl.textContent = '';
+        statusEl.className = 'contact-status';
+      };
+
+      // If a real endpoint (e.g. GoDaddy form URL or Formspree) is configured
+      if (url && url !== '#' && url !== window.location.href) {
+        if (form.getAttribute('data-use-fetch') === 'true') {
+          event.preventDefault();
+          if (button) button.disabled = true;
+          if (label) label.textContent = 'Sending...';
+          clearStatus();
+
+          window.fetch(url, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: { 'Accept': 'application/json' }
+          })
+            .then(function (res) {
+              if (button) button.disabled = false;
+              if (res.ok) {
+                if (label) label.textContent = 'Message sent';
+                if (button) button.classList.add('is-submitted');
+                setStatus('Thank you! Your message has been sent successfully.', true);
+                form.reset();
+              } else {
+                if (label) label.textContent = 'Send message';
+                setStatus('Could not send message. Please try again or email us directly.', false);
+              }
+            })
+            .catch(function () {
+              if (button) button.disabled = false;
+              if (label) label.textContent = 'Send message';
+              setStatus('Could not connect. Please check your network or try again.', false);
+            });
+          return;
+        }
+        return;
+      }
+
+      // Default client-side send simulation when no action URL has been set yet
+      event.preventDefault();
+      if (button) {
+        button.disabled = true;
+        if (label) label.textContent = 'Sending...';
+      }
+      clearStatus();
+
+      window.setTimeout(function () {
+        if (button) {
+          button.disabled = false;
+          button.classList.add('is-submitted');
+        }
+        if (label) label.textContent = 'Message sent';
+        setStatus('Thank you! Your message has been received. We will get back to you shortly.', true);
+        form.reset();
+      }, 500);
     });
   });
 

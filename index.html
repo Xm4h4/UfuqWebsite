@@ -256,22 +256,33 @@
           </div>
         </section>
 
-        <section class="content-section newsletter-section reveal-on-scroll" id="contact">
-          <h2><i class="hgi hgi-stroke hgi-mail-open-01 hugeicon" aria-hidden="true"></i>Newsletter</h2>
-          <div class="newsletter-card">
-            <p>Get practical notes on positioning, website systems, and conversion-focused WordPress builds.</p>
-            <form class="newsletter-form" action="#" method="post" data-newsletter-form>
-              <label class="screen-reader-text" for="newsletter-email">Email address</label>
-              <input id="newsletter-email" type="email" name="EMAIL" placeholder="Email address" autocomplete="email" required>
-              <div style="position: absolute; left: -5000px;" aria-hidden="true">
-                <input type="text" name="b_mailchimp_honeypot" tabindex="-1" value="">
+        <section class="content-section contact-section reveal-on-scroll" id="contact">
+          <h2><i class="hgi hgi-stroke hgi-mail-01 hugeicon" aria-hidden="true"></i>Contact us</h2>
+          <div class="contact-card">
+            <p>Have a project in mind or want to explore working together? Send us a message.</p>
+            <form class="contact-form" action="#" method="post" data-contact-form>
+              <div class="contact-form-row">
+                <div class="contact-form-group">
+                  <label class="screen-reader-text" for="contact-name">Name</label>
+                  <input id="contact-name" type="text" name="name" placeholder="Your name" autocomplete="name" required>
+                </div>
+                <div class="contact-form-group">
+                  <label class="screen-reader-text" for="contact-email">Email</label>
+                  <input id="contact-email" type="email" name="email" placeholder="Your email address" autocomplete="email" required>
+                </div>
               </div>
-              <button type="submit">
-                <span class="btn-label">Subscribe</span>
-                <span class="btn-icon-trailing"><i class="hgi hgi-stroke hgi-sent hugeicon" aria-hidden="true"></i></span>
-              </button>
+              <div class="contact-form-group">
+                <label class="screen-reader-text" for="contact-message">Message</label>
+                <textarea id="contact-message" name="message" placeholder="Tell us about your project or inquiry..." rows="4" required></textarea>
+              </div>
+              <div class="contact-form-action">
+                <button type="submit" class="contact-submit-btn">
+                  <span class="btn-label">Send message</span>
+                  <span class="btn-icon-trailing"><i class="hgi hgi-stroke hgi-sent hugeicon" aria-hidden="true"></i></span>
+                </button>
+              </div>
             </form>
-            <p class="newsletter-status" data-newsletter-status aria-live="polite"></p>
+            <p class="contact-status" data-contact-status aria-live="polite"></p>
           </div>
         </section>
 
