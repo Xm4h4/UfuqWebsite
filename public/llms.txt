@@ -1,0 +1,29 @@
+# Ufuq — Your Digital Transformation Partner
+
+> Ufuq (https://ufuq.agency) is a digital agency that builds digital systems, mobile and web applications, AI workflows, Framer websites, and WordPress platforms for ambitious businesses and agencies worldwide.
+
+## Core Services
+
+- **Mobile App Design**: Clean, functional, and delightful iOS & Android mobile application design.
+- **Web App Design**: Sleek, responsive, and intuitive web application interfaces and dashboards.
+- **Framer Websites**: High-conversion, high-performance landing pages and marketing websites built in Framer.
+- **AI Solutions**: Custom AI workflows, integrations, automations, and intelligent product features.
+- **WordPress Development**: Fast, editable, manageable WordPress websites with modern component systems.
+- **Brand Identity Design**: Distinctive visual identity systems, logos, typography, and design guidelines.
+
+## Process
+
+1. **Week 1 — Map**: Define the offer, pages, content model, conversion paths, and CMS ownership before design starts.
+2. **Weeks 2-4 — Build**: Design and build in tight review cycles with reusable components and real content.
+3. **Ongoing — Operate**: Team training, comprehensive system documentation, and post-launch performance tuning.
+
+## Communication & Delivery
+
+- Async-first communication via writing, clear preview links, and structured action items without unnecessary meetings.
+- Tools: Figma, WordPress, Framer, modern web technologies.
+
+## Contact
+
+- Website: https://ufuq.agency/
+- Inquiries: monir@ufuq.agency
+- Founder & Designer: Abdul Monir

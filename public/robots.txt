@@ -1,0 +1,30 @@
+# Robots.txt for Ufuq (https://ufuq.agency)
+# Allows standard search engine crawlers and AI search engines
+
+User-agent: *
+Allow: /
+
+# Allow AI & Generative Search Engines
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# Sitemap
+Sitemap: https://ufuq.agency/sitemap.xml
