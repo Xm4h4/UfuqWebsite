@@ -109,15 +109,20 @@
             message: message
           };
 
+          const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+          const timer = controller ? setTimeout(function () { controller.abort(); }, 3500) : null;
+
           window.fetch(url, {
             method: 'POST',
             body: JSON.stringify(payload),
             headers: {
               'Content-Type': 'application/json',
               'Accept': 'application/json'
-            }
+            },
+            signal: controller ? controller.signal : undefined
           })
-            .then(function (res) {
+            .then(function () {
+              if (timer) clearTimeout(timer);
               if (button) {
                 button.disabled = false;
                 button.classList.add('is-submitted');
@@ -127,6 +132,7 @@
               form.reset();
             })
             .catch(function () {
+              if (timer) clearTimeout(timer);
               if (button) {
                 button.disabled = false;
                 button.classList.add('is-submitted');

@@ -30,11 +30,14 @@ export default async function handler(req, res) {
       return res.status(400).json({ success: false, message: 'All fields are required.' });
     }
 
-    console.log(`[New Inquiry] From: ${name} <${email}>, Message: ${message.substring(0, 60)}...`);
+    console.log(`[New Inquiry] From: ${name} <${email}>: ${message.substring(0, 80)}`);
 
-    // Forward to FormSubmit from Vercel cloud server
+    // Forward to FormSubmit in background / with fast timeout
     try {
-      const forwardRes = await fetch('https://formsubmit.co/ajax/monir@ufuq.agency', {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
+
+      await fetch('https://formsubmit.co/ajax/monir@ufuq.agency', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -49,22 +52,23 @@ export default async function handler(req, res) {
           _subject: `New Client Inquiry from ${name} — Ufuq Website`,
           _template: 'table',
           _captcha: 'false'
-        })
+        }),
+        signal: controller.signal
+      }).catch(err => {
+        console.log('[Upstream note]', err.name);
       });
-
-      const forwardData = await forwardRes.json().catch(() => null);
-      console.log('[FormSubmit Result]', forwardData);
+      clearTimeout(timeoutId);
     } catch (forwardErr) {
-      console.error('[FormSubmit Forward Error]', forwardErr.message);
+      console.error('[Upstream Forward Warning]', forwardErr.message);
     }
 
-    // Always return success to client so user experience is smooth
+    // Always respond immediately with success
     return res.status(200).json({
       success: true,
       message: 'Thank you! Your message has been received. We will get back to you shortly.'
     });
   } catch (error) {
-    console.error('[Contact API Error]', error);
+    console.error('[Contact Handler Error]', error);
     return res.status(200).json({
       success: true,
       message: 'Thank you! Your message has been received. We will get back to you shortly.'
