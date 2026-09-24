@@ -398,8 +398,7 @@
         } else {
           countdown.classList.remove('is-ended');
           if (labelTextNode) {
-            const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-            labelTextNode.textContent = months[month] + ' SLOTS CLOSE IN';
+            labelTextNode.textContent = 'OFFER ENDS';
           }
 
           const totalSeconds = Math.floor(remainingMs / 1000);
