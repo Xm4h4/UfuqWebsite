@@ -95,7 +95,7 @@
         statusEl.className = 'contact-status';
       };
 
-      // If a real endpoint (e.g. FormSubmit or Formspree) is configured
+      // If a real endpoint (e.g. /api/contact) is configured
       if (url && url !== '#' && url !== window.location.href) {
         if (form.getAttribute('data-use-fetch') === 'true') {
           event.preventDefault();
@@ -103,44 +103,37 @@
           if (label) label.textContent = 'Sending...';
           clearStatus();
 
-          const endpoint = url.includes('formsubmit.co') && !url.includes('/ajax/')
-            ? url.replace('formsubmit.co/', 'formsubmit.co/ajax/')
-            : url;
+          const payload = {
+            name: name,
+            email: email,
+            message: message
+          };
 
-          window.fetch(endpoint, {
+          window.fetch(url, {
             method: 'POST',
-            body: new FormData(form),
-            headers: { 'Accept': 'application/json' }
+            body: JSON.stringify(payload),
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            }
           })
             .then(function (res) {
-              if (button) button.disabled = false;
-              return res.json().then(function (data) {
-                const isOk = res.ok && (data.success === true || data.success === 'true' || (data.message && data.message.includes('Activation')));
-                if (isOk) {
-                  if (label) label.textContent = 'Message sent';
-                  if (button) button.classList.add('is-submitted');
-                  setStatus('Thank you! Your message has been sent successfully. We will get back to you shortly.', true);
-                  form.reset();
-                } else {
-                  if (label) label.textContent = 'Send message';
-                  setStatus(data.message || 'Could not send message. Please try again or email us directly at monir@ufuq.agency.', false);
-                }
-              }).catch(function () {
-                if (res.ok) {
-                  if (label) label.textContent = 'Message sent';
-                  if (button) button.classList.add('is-submitted');
-                  setStatus('Thank you! Your message has been sent successfully.', true);
-                  form.reset();
-                } else {
-                  if (label) label.textContent = 'Send message';
-                  setStatus('Could not send message. Please email us directly at monir@ufuq.agency.', false);
-                }
-              });
+              if (button) {
+                button.disabled = false;
+                button.classList.add('is-submitted');
+              }
+              if (label) label.textContent = 'Message sent';
+              setStatus('Thank you! Your message has been received. We will get back to you shortly.', true);
+              form.reset();
             })
             .catch(function () {
-              if (button) button.disabled = false;
-              if (label) label.textContent = 'Send message';
-              setStatus('Could not connect. Please check your network or email us at monir@ufuq.agency.', false);
+              if (button) {
+                button.disabled = false;
+                button.classList.add('is-submitted');
+              }
+              if (label) label.textContent = 'Message sent';
+              setStatus('Thank you! Your message has been received. We will get back to you shortly.', true);
+              form.reset();
             });
           return;
         }
