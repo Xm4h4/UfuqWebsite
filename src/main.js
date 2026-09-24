@@ -95,7 +95,7 @@
         statusEl.className = 'contact-status';
       };
 
-      // If a real endpoint (e.g. GoDaddy form URL or Formspree) is configured
+      // If a real endpoint (e.g. FormSubmit or Formspree) is configured
       if (url && url !== '#' && url !== window.location.href) {
         if (form.getAttribute('data-use-fetch') === 'true') {
           event.preventDefault();
@@ -103,27 +103,44 @@
           if (label) label.textContent = 'Sending...';
           clearStatus();
 
-          window.fetch(url, {
+          const endpoint = url.includes('formsubmit.co') && !url.includes('/ajax/')
+            ? url.replace('formsubmit.co/', 'formsubmit.co/ajax/')
+            : url;
+
+          window.fetch(endpoint, {
             method: 'POST',
             body: new FormData(form),
             headers: { 'Accept': 'application/json' }
           })
             .then(function (res) {
               if (button) button.disabled = false;
-              if (res.ok) {
-                if (label) label.textContent = 'Message sent';
-                if (button) button.classList.add('is-submitted');
-                setStatus('Thank you! Your message has been sent successfully.', true);
-                form.reset();
-              } else {
-                if (label) label.textContent = 'Send message';
-                setStatus('Could not send message. Please try again or email us directly.', false);
-              }
+              return res.json().then(function (data) {
+                const isOk = res.ok && (data.success === true || data.success === 'true' || (data.message && data.message.includes('Activation')));
+                if (isOk) {
+                  if (label) label.textContent = 'Message sent';
+                  if (button) button.classList.add('is-submitted');
+                  setStatus('Thank you! Your message has been sent successfully. We will get back to you shortly.', true);
+                  form.reset();
+                } else {
+                  if (label) label.textContent = 'Send message';
+                  setStatus(data.message || 'Could not send message. Please try again or email us directly at monir@ufuq.agency.', false);
+                }
+              }).catch(function () {
+                if (res.ok) {
+                  if (label) label.textContent = 'Message sent';
+                  if (button) button.classList.add('is-submitted');
+                  setStatus('Thank you! Your message has been sent successfully.', true);
+                  form.reset();
+                } else {
+                  if (label) label.textContent = 'Send message';
+                  setStatus('Could not send message. Please email us directly at monir@ufuq.agency.', false);
+                }
+              });
             })
             .catch(function () {
               if (button) button.disabled = false;
               if (label) label.textContent = 'Send message';
-              setStatus('Could not connect. Please check your network or try again.', false);
+              setStatus('Could not connect. Please check your network or email us at monir@ufuq.agency.', false);
             });
           return;
         }
