@@ -3,10 +3,33 @@
   const sidebar = document.querySelector('.site-sidebar');
 
   if (toggle && sidebar) {
-    toggle.addEventListener('click', function () {
+    toggle.addEventListener('click', function (e) {
+      e.stopPropagation();
       const expanded = toggle.getAttribute('aria-expanded') === 'true';
       toggle.setAttribute('aria-expanded', String(!expanded));
       sidebar.classList.toggle('is-open', !expanded);
+    });
+
+    sidebar.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        sidebar.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    document.addEventListener('click', function (e) {
+      if (sidebar.classList.contains('is-open') && !sidebar.contains(e.target) && !toggle.contains(e.target)) {
+        sidebar.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  const backToTopBtn = document.querySelector('.back-to-top');
+  if (backToTopBtn) {
+    backToTopBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
 
@@ -339,11 +362,10 @@
       const now = new Date();
       const year = now.getFullYear();
       const month = now.getMonth();
-      const day = now.getDate();
-      // Offer is active only for the first 3 days of every month (Days 1, 2, 3), ending when Day 4 begins
-      const deadline = new Date(year, month, 4, 0, 0, 0, 0);
+      // Countdown to the end of the current month
+      const deadline = new Date(year, month + 1, 1, 0, 0, 0, 0);
       const remainingMs = deadline.getTime() - now.getTime();
-      const isActive = day <= 3 && remainingMs > 0;
+      const isActive = remainingMs > 0;
 
       countdownElements.forEach(function (countdown) {
         const labelTextNode = countdown.closest('.offer-counter')?.querySelector('[data-offer-label-text]');
@@ -375,7 +397,8 @@
         } else {
           countdown.classList.remove('is-ended');
           if (labelTextNode) {
-            labelTextNode.textContent = 'FREE AUDIT ENDS';
+            const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+            labelTextNode.textContent = months[month] + ' SLOTS CLOSE IN';
           }
 
           const totalSeconds = Math.floor(remainingMs / 1000);
