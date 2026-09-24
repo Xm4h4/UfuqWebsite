@@ -110,7 +110,7 @@
           };
 
           const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
-          const timer = controller ? setTimeout(function () { controller.abort(); }, 3500) : null;
+          const timer = controller ? setTimeout(function () { controller.abort(); }, 12000) : null;
 
           window.fetch(url, {
             method: 'POST',
