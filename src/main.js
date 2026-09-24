@@ -390,7 +390,7 @@
         if (!isActive) {
           countdown.classList.add('is-ended');
           if (labelTextNode) {
-            labelTextNode.textContent = 'OFFER ENDED';
+            labelTextNode.textContent = 'FREE AUDIT ENDED';
           }
           daysNode.textContent = '00';
           hoursNode.textContent = '00';
@@ -398,7 +398,7 @@
         } else {
           countdown.classList.remove('is-ended');
           if (labelTextNode) {
-            labelTextNode.textContent = 'OFFER ENDS';
+            labelTextNode.textContent = 'FREE AUDIT ENDS IN';
           }
 
           const totalSeconds = Math.floor(remainingMs / 1000);
