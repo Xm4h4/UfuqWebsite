@@ -398,7 +398,7 @@
         } else {
           countdown.classList.remove('is-ended');
           if (labelTextNode) {
-            labelTextNode.textContent = 'FREE AUDIT ENDS IN';
+            labelTextNode.textContent = 'FREE AUDIT ENDS';
           }
 
           const totalSeconds = Math.floor(remainingMs / 1000);
