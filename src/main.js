@@ -291,49 +291,81 @@
       return;
     }
 
-    content.style.height = details.open ? 'auto' : '0px';
-    content.style.opacity = details.open ? '1' : '0';
+    // Set initial state without transition so no flash on load
+    content.style.transition = 'none';
+    content.style.height    = details.open ? 'auto' : '0px';
+    content.style.opacity   = details.open ? '1' : '0';
     content.style.transform = details.open ? 'translateY(0)' : 'translateY(-0.35rem)';
-
-    summary.addEventListener('click', function (event) {
-      event.preventDefault();
-
-      if (details.open) {
-        details.classList.add('is-closing');
-        content.style.height = content.scrollHeight + 'px';
-        void content.offsetHeight;
-        window.requestAnimationFrame(function () {
-          content.style.height = '0px';
-          content.style.opacity = '0';
-          content.style.transform = 'translateY(-0.35rem)';
-        });
-
-        window.setTimeout(function () {
-          details.open = false;
-          details.classList.remove('is-closing');
-        }, 320);
-        return;
-      }
-
-      details.open = true;
-      content.style.height = '0px';
-      content.style.opacity = '0';
-      content.style.transform = 'translateY(-0.35rem)';
-      void content.offsetHeight;
-
-      window.requestAnimationFrame(function () {
-        content.style.height = content.scrollHeight + 'px';
-        content.style.opacity = '1';
-        content.style.transform = 'translateY(0)';
+    // Re-enable transitions after paint
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        content.style.transition = '';
       });
     });
 
-    content.addEventListener('transitionend', function (event) {
-      if (event.propertyName === 'height' && details.open && !details.classList.contains('is-closing')) {
-        content.style.height = 'auto';
+    let animating = false;
+
+    summary.addEventListener('click', function (event) {
+      event.preventDefault();
+      if (animating) return; // block clicks mid-animation
+
+      if (details.open) {
+        // --- CLOSE ---
+        animating = true;
+        details.classList.add('is-closing');
+
+        // Lock height from auto to a pixel value so transition works
+        content.style.height = content.scrollHeight + 'px';
+        content.style.opacity = '1';
+        content.style.transform = 'translateY(0)';
+
+        // Double rAF: ensure the pixel height is painted before animating to 0
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            content.style.height    = '0px';
+            content.style.opacity   = '0';
+            content.style.transform = 'translateY(-0.35rem)';
+          });
+        });
+
+        // After transition: actually remove [open] attribute
+        setTimeout(function () {
+          details.open = false;
+          details.classList.remove('is-closing');
+          animating = false;
+        }, 330);
+
+      } else {
+        // --- OPEN ---
+        animating = true;
+        details.open = true;
+
+        content.style.height    = '0px';
+        content.style.opacity   = '0';
+        content.style.transform = 'translateY(-0.35rem)';
+
+        // Double rAF: let browser register open state & initial styles before animating
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            content.style.height    = content.scrollHeight + 'px';
+            content.style.opacity   = '1';
+            content.style.transform = 'translateY(0)';
+          });
+        });
+
+        // Switch height to auto once open so text reflow works
+        content.addEventListener('transitionend', function onEnd(e) {
+          if (e.propertyName !== 'height') return;
+          if (details.open && !details.classList.contains('is-closing')) {
+            content.style.height = 'auto';
+          }
+          animating = false;
+          content.removeEventListener('transitionend', onEnd);
+        });
       }
     });
   });
+
 
   const revealTargets = document.querySelectorAll('.reveal-on-scroll');
 
