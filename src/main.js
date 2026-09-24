@@ -68,6 +68,7 @@
 
   document.querySelectorAll('[data-contact-form]').forEach(function (form) {
     form.addEventListener('submit', function (event) {
+      event.preventDefault();
       const url = (form.getAttribute('action') || '').trim();
       const nameInput = form.querySelector('input[name="name"]');
       const emailInput = form.querySelector('input[name="email"]');

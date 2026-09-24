@@ -1959,10 +1959,10 @@ h3 {
 }
 
 .contact-card {
-  padding: 1.1rem 1.2rem;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.025);
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
 }
 
 .contact-card > p {
